@@ -1,22 +1,20 @@
 package com.grupo5.huiapi.user;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class UserService {
-    public List<User> getUsers() {
-        User markel = new User();
-        markel.setUsername("markelca");
-        markel.setNombre_apellidos("Markel Cuesta");
-        markel.setEmail("cuestaarribas.markel@gmail.com");
+    private final UserRepository userRepository;
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-        User jon = new User();
-        jon.setUsername("jonusername");
-        jon.setNombre_apellidos("Jon Arroita");
-        jon.setEmail("jon@email.com");
-        return List.of(markel, jon);
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 }

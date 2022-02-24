@@ -1,55 +1,48 @@
 package com.grupo5.huiapi.user;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
+import lombok.*;
 import javax.persistence.*;
 
+// JPA
+@Entity @Table
+// Lombok
+@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
 @ToString
-@Entity
-@Table
 public class User {
     @Getter @Setter
     @Id
-    @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "user_sequence"
-    )
+    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1 )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
-    @Getter @Setter
+
+    @Column(nullable = false, unique = true)
     private String username;
-    @Getter @Setter
-    private String nombre_apellidos;
-    @Getter @Setter
-    private String instagram;
-    @Getter @Setter
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false, unique = true)
     private String email;
-    @Getter @Setter
+
+    @Column(nullable = false)
+    private String nombre_apellidos;
+
+    @Column(nullable = true)
+    private String descripcion;
+
+    @Column(nullable = true)
+    private String instagram;
+
+    @Column(nullable = true)
     private String telegram;
-    @Getter @Setter
+
+    @Column(nullable = true)
     private String youtube;
-    @Getter @Setter
+
+    @Column(nullable = true)
     private String facebook;
 
-    public User() {
-    }
-
-    public User(Long id, String username, String nombre_apellidos, String instagram, String email, String telegram, String youtube, String facebook) {
-        this.id = id;
-        this.username = username;
-        this.nombre_apellidos = nombre_apellidos;
-        this.instagram = instagram;
-        this.email = email;
-        this.telegram = telegram;
-        this.youtube = youtube;
-        this.facebook = facebook;
-    }
 
     public User(String username, String nombre_apellidos, String instagram, String email, String telegram, String youtube, String facebook) {
         this.username = username;
@@ -59,5 +52,13 @@ public class User {
         this.telegram = telegram;
         this.youtube = youtube;
         this.facebook = facebook;
+    }
+
+    // Constructor con los parámetros mínimos
+    public User(String username, String password, String mail, String nombre_apellidos) {
+        this.password = password;
+        this.nombre_apellidos = nombre_apellidos;
+        this.email = mail;
+        this.username = username;
     }
 }
