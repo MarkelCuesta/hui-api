@@ -1,9 +1,6 @@
 package com.grupo5.huiapi.user;
 
-import Exceptions.EmailTakenException;
-import Exceptions.IncorrectPasswordException;
-import Exceptions.UserIdNotFoundException;
-import Exceptions.UsernameTakenException;
+import Exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +36,7 @@ public class UserService {
 
     public String deleteUser(Long id, String password) throws UserIdNotFoundException, IncorrectPasswordException {
         Optional<User> optionalUser = userRepository.findById(id);
-        if(!optionalUser.isPresent())
+        if(optionalUser.isEmpty())
             throw new UserIdNotFoundException();
 
         User user = optionalUser.get();
@@ -50,5 +47,29 @@ public class UserService {
 
         userRepository.delete(user);
         return "User successfully deleted";
+    }
+
+
+    public String updateUser(Long id,String password, User updatingUser) throws UserIdNotFoundException, IncorrectPasswordException, RequiredValuesMissingException {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if(optionalUser.isEmpty())
+            throw new UserIdNotFoundException();
+
+        User originalUser = optionalUser.get();
+
+        if( !originalUser.getPassword().equals(password) ) {
+            throw new IncorrectPasswordException();
+        }
+
+        // Comprobamos si tiene todos los campos obligatorios
+        if(updatingUser.getEmail().isEmpty()
+                || updatingUser.getUsername().isEmpty()
+                || updatingUser.getPassword().isEmpty()
+                || updatingUser.getNombre_apellidos().isEmpty())
+            throw new RequiredValuesMissingException();
+
+        updatingUser.setId(id);
+        userRepository.save(updatingUser);
+        return "User updated";
     }
 }
