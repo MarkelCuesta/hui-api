@@ -1,14 +1,15 @@
 package com.grupo5.huiapi.user;
 
+import Exceptions.EmailTakenException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "user")
 public class UserController {
     private final UserService userService;
 
@@ -18,5 +19,14 @@ public class UserController {
     @GetMapping("/users")
     public List<User> getUsers() {
         return userService.getUsers();
+    }
+
+    @PostMapping(value = "/register")
+    public String registerNewUser(@RequestBody User user) {
+        try {
+            return userService.insertUser(user);
+        } catch (EmailTakenException e) {
+             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
+        }
     }
 }
