@@ -51,6 +51,7 @@ local.properties
 .project
 .settings
 .sts4-cache
+application.properties
 
 # Code Recommenders
 .recommenders/
