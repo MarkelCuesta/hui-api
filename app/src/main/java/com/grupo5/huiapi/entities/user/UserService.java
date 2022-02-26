@@ -1,4 +1,4 @@
-package com.grupo5.huiapi.user;
+package com.grupo5.huiapi.entities.user;
 
 import Exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;

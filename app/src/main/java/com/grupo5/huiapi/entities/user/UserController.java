@@ -1,4 +1,4 @@
-package com.grupo5.huiapi.user;
+package com.grupo5.huiapi.entities.user;
 
 import Exceptions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,4 +1,4 @@
-package com.grupo5.huiapi.user;
+package com.grupo5.huiapi.entities.user;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
