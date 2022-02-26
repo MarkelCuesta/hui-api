@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/user", method = RequestMethod.GET)
@@ -24,6 +25,9 @@ public class UserController {
         return userService.getUsers();
     }
 
+    @GetMapping(path = "{id}")
+    public Optional<User> getUser(@PathVariable("id") Long id) { return userService.getUser(id);}
+
     @PostMapping("register")
     public String registerNewUser(@RequestBody User user) {
         try {
@@ -33,10 +37,9 @@ public class UserController {
              throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
-    @DeleteMapping(path = "{id}")
+    @DeleteMapping(path = "delete/{id}")
     public String deleteUser(@PathVariable("id") Long id, @RequestBody ObjectNode body) {
         String password = body.get("password").asText();
-        System.out.println(password);
         try {
             return userService.deleteUser(id, password);
         } catch (IncorrectPasswordException | UserIdNotFoundException e) {
@@ -44,7 +47,7 @@ public class UserController {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
-    @PutMapping(path = "{id}")
+    @PutMapping(path = "update/{id}")
     public String updateUser(@PathVariable("id") Long id, @RequestBody ObjectNode body) {
         ObjectMapper mapper = new ObjectMapper();
         String password = body.get("password").asText();

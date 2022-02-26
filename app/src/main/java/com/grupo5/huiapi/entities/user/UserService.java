@@ -19,6 +19,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public Optional<User> getUser(Long id) {return userRepository.findById(id);}
 
     public String insertUser(User user) throws EmailTakenException, UsernameTakenException, RequiredValuesMissingException {
         Optional<User> userOptionalByMail= userRepository.findUserByEmail(user.getEmail());
@@ -30,8 +31,6 @@ public class UserService {
             throw new UsernameTakenException();
 
         String missingValues = user.checkNullFields();
-        System.out.println("a" + missingValues + "a00");
-        System.out.println();
         if(missingValues != null)
             throw new RequiredValuesMissingException(missingValues);
 
@@ -45,7 +44,6 @@ public class UserService {
             throw new UserIdNotFoundException();
 
         User user = optionalUser.get();
-        System.out.println(user.getPassword());
         if(!user.getPassword().equals(password)) {
             throw new IncorrectPasswordException();
         }
