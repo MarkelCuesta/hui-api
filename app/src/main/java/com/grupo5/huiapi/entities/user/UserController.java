@@ -28,8 +28,9 @@ public class UserController {
     public String registerNewUser(@RequestBody User user) {
         try {
             return userService.insertUser(user);
-        } catch (EmailTakenException | UsernameTakenException e) {
-             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
+        } catch (EmailTakenException | UsernameTakenException | RequiredValuesMissingException e) {
+            HttpStatus status = e instanceof RequiredValuesMissingException ? HttpStatus.BAD_REQUEST : HttpStatus.CONFLICT;
+             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
     @DeleteMapping(path = "{id}")

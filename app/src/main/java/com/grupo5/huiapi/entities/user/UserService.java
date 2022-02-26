@@ -3,7 +3,6 @@ package com.grupo5.huiapi.entities.user;
 import com.grupo5.huiapi.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +20,7 @@ public class UserService {
     }
 
 
-    public String insertUser(User user) throws EmailTakenException, UsernameTakenException {
+    public String insertUser(User user) throws EmailTakenException, UsernameTakenException, RequiredValuesMissingException {
         Optional<User> userOptionalByMail= userRepository.findUserByEmail(user.getEmail());
         if(userOptionalByMail.isPresent())
             throw new EmailTakenException();
@@ -29,6 +28,12 @@ public class UserService {
         Optional<User> userOptionalByUsername = userRepository.findUserByUsername(user.getUsername());
         if(userOptionalByUsername.isPresent())
             throw new UsernameTakenException();
+
+        String missingValues = user.checkNullFields();
+        System.out.println("a" + missingValues + "a00");
+        System.out.println();
+        if(missingValues != null)
+            throw new RequiredValuesMissingException(missingValues);
 
         userRepository.save(user);
         return "User successfully registered";
@@ -62,11 +67,9 @@ public class UserService {
         }
 
         // Comprobamos si tiene todos los campos obligatorios
-        if(updatingUser.getEmail().isEmpty()
-                || updatingUser.getUsername().isEmpty()
-                || updatingUser.getPassword().isEmpty()
-                || updatingUser.getNombre_apellidos().isEmpty())
-            throw new RequiredValuesMissingException();
+        String nullFields = updatingUser.checkNullFields();
+        if(nullFields != null)
+            throw new RequiredValuesMissingException(nullFields);
 
         updatingUser.setId(id);
         userRepository.save(updatingUser);

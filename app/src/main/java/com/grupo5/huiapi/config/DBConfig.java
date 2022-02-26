@@ -80,7 +80,7 @@ public class DBConfig {
             List<Category> streetSubCategories = street.addSubCategories("Parkour", "Skate");
             ret.addAll(streetSubCategories);
 
-            return ret;
+        return ret;
     }
 
 
