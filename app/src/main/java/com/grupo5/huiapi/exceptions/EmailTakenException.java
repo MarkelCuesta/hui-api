@@ -1,4 +1,4 @@
-package Exceptions;
+package com.grupo5.huiapi.exceptions;
 
 public class EmailTakenException extends Exception{
     private static final String defaultMessage = "This email has already been taken";

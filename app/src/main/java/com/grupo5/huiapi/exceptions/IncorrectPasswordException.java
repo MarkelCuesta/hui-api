@@ -1,4 +1,4 @@
-package Exceptions;
+package com.grupo5.huiapi.exceptions;
 
 public class IncorrectPasswordException extends Exception{
     private static final String defaultMessage = "Incorrect password.";

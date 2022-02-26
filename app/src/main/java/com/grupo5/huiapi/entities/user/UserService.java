@@ -1,6 +1,6 @@
 package com.grupo5.huiapi.entities.user;
 
-import Exceptions.*;
+import com.grupo5.huiapi.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

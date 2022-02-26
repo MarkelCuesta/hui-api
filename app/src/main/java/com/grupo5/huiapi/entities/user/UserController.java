@@ -1,6 +1,6 @@
 package com.grupo5.huiapi.entities.user;
 
-import Exceptions.*;
+import com.grupo5.huiapi.exceptions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
