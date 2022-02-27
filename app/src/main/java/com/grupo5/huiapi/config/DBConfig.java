@@ -27,8 +27,8 @@ public class DBConfig {
     @Bean
     CommandLineRunner commandLineRunner() {
         return args -> {
-            userRepository.saveAll( getInitialUsers() );
             categoryRepository.saveAll( getInitialCategories() );
+            userRepository.saveAll( getInitialUsers() );
             eventRepository.saveAll( getInitialEvents() );
 
         };
@@ -55,12 +55,17 @@ public class DBConfig {
     }
 
     private List<User> getInitialUsers() {
+        Category boxingat = categoryRepository.findCategoryByName("Boxeo").get();
+        Set<Category> favs1 = new HashSet<>(List.of(boxingat));
+
         return List.of(
             new User(
                 "jon33",
                 "anotherpassword123",
                 "jon@email.com",
-                "Jon Arroita"
+                "Jon Arroita",
+                    favs1
+
             ),
             new User(
                 "markelca",

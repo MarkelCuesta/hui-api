@@ -1,5 +1,7 @@
 package com.grupo5.huiapi.entities.user;
 
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.event.Event;
 import lombok.*;
@@ -17,6 +19,7 @@ import java.util.Set;
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
 @ToString
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class User {
     @Getter @Setter
     @Id
@@ -51,7 +54,7 @@ public class User {
     @Column()
     private String facebook;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "enrolled_events",
             joinColumns = {
                     @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)
@@ -62,11 +65,11 @@ public class User {
     )
     private Set<Event> enrolled_events = new HashSet<>();
 
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Column()
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<Event> organized_events = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "favorite_categories",
             joinColumns = {
                     @JoinColumn(name = "category_id", referencedColumnName = "id", updatable = false)
@@ -75,6 +78,7 @@ public class User {
                     @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
             }
     )
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<Category> favorite_categories = new HashSet<>();
 
 
@@ -95,7 +99,14 @@ public class User {
         this.email = mail;
         this.username = username;
     }
-
+    // Constructor con los parámetros mínimos
+    public User(String username, String password, String mail, String fullName, Set<Category> favorite_categories) {
+        this.password = password;
+        this.fullName = fullName;
+        this.email = mail;
+        this.username = username;
+        this.favorite_categories = favorite_categories;
+    }
     public String checkNullFields() {
         List<String> missingFields = new ArrayList<>();
         if(ObjectUtils.isEmpty(this.password))

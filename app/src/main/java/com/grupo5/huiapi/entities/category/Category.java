@@ -1,5 +1,8 @@
 package com.grupo5.huiapi.entities.category;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +15,7 @@ import java.util.List;
 @Entity @Table
 @NoArgsConstructor @AllArgsConstructor
 @Getter @Setter
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Category {
     @Id
     @SequenceGenerator(sequenceName = "category_sequence", name = "category_sequence", allocationSize = 1)
@@ -21,6 +25,7 @@ public class Category {
     private String name;
     @ManyToOne()
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    @JsonIdentityReference(alwaysAsId = true)
     private Category parent;
 
     public Category(String name) {
