@@ -4,7 +4,6 @@ import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.event.Event;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -37,43 +36,43 @@ public class User {
     @Column(nullable = false)
     private String fullName;
 
-    @Column(nullable = true)
+    @Column()
     private String description;
 
-    @Column(nullable = true)
+    @Column()
     private String instagram;
 
-    @Column(nullable = true)
+    @Column()
     private String telegram;
 
-    @Column(nullable = true)
+    @Column()
     private String youtube;
 
-    @Column(nullable = true)
+    @Column()
     private String facebook;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "enrolled_events",
             joinColumns = {
-                    @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = true,updatable = false)
+                    @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = true, updatable = false)
+                    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
             }
     )
     private Set<Event> enrolled_events = new HashSet<>();
 
     @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Column(nullable = true)
+    @Column()
     private Set<Event> organized_events = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "favorite_categories",
             joinColumns = {
-                    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = true,updatable = false)
+                    @JoinColumn(name = "category_id", referencedColumnName = "id", updatable = false)
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = true, updatable = false)
+                    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
             }
     )
     private Set<Category> favorite_categories = new HashSet<>();

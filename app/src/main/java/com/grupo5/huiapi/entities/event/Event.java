@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor @AllArgsConstructor
@@ -17,21 +18,41 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "event_sequence")
     private Long id;
     @Column(nullable = false)
-    private String nombre;
-    @Column(nullable = true)
-    private String descripcion;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private String title;
+    private String description;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "event_categories",
         joinColumns = {
-            @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = true,updatable = false)
+            @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)
         },
         inverseJoinColumns = {
-            @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = true, updatable = false)
+            @JoinColumn(name = "category_id", referencedColumnName = "id", updatable = false)
         }
     )
     private Set<Category> categories = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "organizer_id", nullable = false)
     private User organizer;
+
+    public Event(String title, String descripdtion, Set<Category> categories, User organizer) {
+        this.title = title;
+        this.description = description;
+        this.categories = categories;
+        this.organizer = organizer;
+    }
+
+    public Event(String title, String description, User organizer) {
+        this.title = title;
+        this.description = description;
+        this.organizer = organizer;
+    }
+
+        public Set<Category> addCategory(Category cat) {
+        this.categories.add(cat);
+        if(cat.getParent() != null)
+            this.addCategory(cat.getParent());
+        return this.categories;
+    }
+
 }

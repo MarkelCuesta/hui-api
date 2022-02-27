@@ -19,8 +19,8 @@ public class Category {
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "parent_id", nullable = true, referencedColumnName = "id")
+    @ManyToOne()
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Category parent;
 
     public Category(String name) {

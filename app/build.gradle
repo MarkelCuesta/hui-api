@@ -14,16 +14,16 @@ repositories {
 
 dependencies {
 	// Spring dependencies
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.6.3'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.6.3'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.3'
 	// MySQL connection
-	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.25'
 	// Jacksons
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
 	//Lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok:1.18.22'
+	annotationProcessor 'org.projectlombok:lombok:1.18.22'
 }
 
 tasks.named('test') {
