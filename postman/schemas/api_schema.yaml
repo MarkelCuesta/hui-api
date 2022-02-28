@@ -1,0 +1,144 @@
+openapi: 3.0.0
+info:
+  title: HUI API
+  version: 1.0.0
+servers:
+  - url: 'localhost:8080'
+paths:
+  /user:
+    get:
+      summary: List of all public users registered in the platform
+      operationId: List Users
+      responses:
+        200:
+          description: Users Listed
+  /user/{id}:
+    get:
+      operationId: Get User
+      summary: Get a single User by its ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: A numeric id for the user
+      responses:
+        200:
+          description: User data listed
+        404:
+            description: User not found
+  /user/register:
+      post:
+          operationId: Register User
+          responses:
+              200:
+                description: User successfully registered
+              400:
+                description: Missing one or more fields (password, fulname, username, email)
+  /user/update/{id}:
+      summary: Update a user data
+      put:
+        operationId: Update User
+        parameters:
+          - in: path
+            required: true
+            name: id
+            schema:
+              type: integer
+              minimum: 1
+        responses:
+          200:
+            description: User updated
+          400:
+            description: Missing one or more fields (password, fulname, username, email)
+          401:
+              description: Incorrect password
+          404:
+              description: User not found
+  /user/delete/{id}:
+      summary: Delete a user
+      delete:
+        operationId: Delete User
+        parameters:
+          - in: path 
+            required: true
+            name: id
+            schema: 
+              type: integer
+              minimum: 1
+        responses:
+            200:
+                description: User successfully deleted
+            400:
+                description: User not found
+  /categories:
+    summary: List all the categories with its full data
+    get:
+      operationId: List Categories
+      responses:
+        '200':
+          description: Categories listed
+  '/categories/{id}':
+    summary: Get one category with its data
+    get:
+      operationId: Single Category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        200:
+          description: A single category object
+        404:
+            description: Category not found
+  /categories/{id}/subcategories:
+    get:
+      operationId: Get Subcategories
+      summary: List of the subcategories for one category by its id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        200:
+          description: Subcategories listed
+        404:
+            description: Category not found
+  /events:
+    get:
+      operationId: List Events
+      responses:
+        '200':
+          description: A list of all avaliable events
+  /events/{id}:
+    summary: Get one event with its data
+    get:
+      operationId: Get Event
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        200:
+          description: Get a single event by its id
+        404:
+            description: Event not found
+
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+security:
+  - BasicAuth: []
