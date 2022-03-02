@@ -19,7 +19,12 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Optional<User> getUser(Long id) {return userRepository.findById(id);}
+    public User getUser(Long id) throws UserNotFoundException {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty())
+            throw new UserNotFoundException();
+        return user.get();
+    }
 
     public String insertUser(User user) throws EmailTakenException, UsernameTakenException, RequiredValuesMissingException {
         Optional<User> userOptionalByMail= userRepository.findUserByEmail(user.getEmail());
@@ -38,10 +43,10 @@ public class UserService {
         return "User successfully registered";
     }
 
-    public String deleteUser(Long id, String password) throws UserIdNotFoundException, IncorrectPasswordException {
+    public String deleteUser(Long id, String password) throws UserNotFoundException, IncorrectPasswordException {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
-            throw new UserIdNotFoundException();
+            throw new UserNotFoundException();
 
         User user = optionalUser.get();
         if(!user.getPassword().equals(password)) {
@@ -53,10 +58,10 @@ public class UserService {
     }
 
 
-    public String updateUser(Long id,String password, User updatingUser) throws UserIdNotFoundException, IncorrectPasswordException, RequiredValuesMissingException {
+    public String updateUser(Long id,String password, User updatingUser) throws UserNotFoundException, IncorrectPasswordException, RequiredValuesMissingException {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
-            throw new UserIdNotFoundException();
+            throw new UserNotFoundException();
 
         User originalUser = optionalUser.get();
 

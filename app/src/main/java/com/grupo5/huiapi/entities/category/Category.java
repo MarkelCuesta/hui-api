@@ -23,7 +23,7 @@ public class Category {
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
     @JsonIdentityReference(alwaysAsId = true)
     private Category parent;

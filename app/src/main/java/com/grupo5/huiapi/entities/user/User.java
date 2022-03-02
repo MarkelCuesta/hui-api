@@ -65,7 +65,7 @@ public class User {
     )
     private Set<Event> enrolled_events = new HashSet<>();
 
-    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE, orphanRemoval = true)
     @JsonIdentityReference(alwaysAsId = true)
     private Set<Event> organized_events = new HashSet<>();
 

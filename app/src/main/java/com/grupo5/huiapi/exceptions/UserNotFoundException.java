@@ -1,13 +1,13 @@
 package com.grupo5.huiapi.exceptions;
 
-public class UserIdNotFoundException extends Exception{
+public class UserNotFoundException extends Exception{
     private static final String defaultMessage = "Couln't find a user with this id.";
 
-    public UserIdNotFoundException() {
+    public UserNotFoundException() {
         super(defaultMessage);
     }
 
-    public UserIdNotFoundException(String message) {
+    public UserNotFoundException(String message) {
         super(message);
     }
 }

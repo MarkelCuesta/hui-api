@@ -2,7 +2,6 @@ package com.grupo5.huiapi.entities.event;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.user.User;
@@ -12,7 +11,6 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor @AllArgsConstructor
@@ -38,7 +36,7 @@ public class Event {
     @JsonIdentityReference(alwaysAsId = true)
     private Set<Category> categories = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinColumn(name = "organizer_id", nullable = false)
     @JsonIdentityReference(alwaysAsId = true)
     private User organizer;
