@@ -4,13 +4,20 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.grupo5.huiapi.entities.category.Category;
+import com.grupo5.huiapi.entities.category.CategoryService;
 import com.grupo5.huiapi.entities.user.User;
+import com.grupo5.huiapi.entities.user.UserService;
+import com.grupo5.huiapi.exceptions.CategoryNotFoundException;
+import com.grupo5.huiapi.exceptions.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor @AllArgsConstructor
@@ -41,12 +48,13 @@ public class Event {
     @JsonIdentityReference(alwaysAsId = true)
     private User organizer;
 
-    public Event(String title, String descripdtion, Set<Category> categories, User organizer) {
+    public Event(String title, String description, Set<Category> categories, User organizer) {
         this.title = title;
         this.description = description;
         this.categories = categories;
         this.organizer = organizer;
     }
+
 
     public Event(String title, String description, User organizer) {
         this.title = title;
