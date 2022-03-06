@@ -4,15 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.grupo5.huiapi.entities.category.Category;
-import com.grupo5.huiapi.entities.category.CategoryService;
 import com.grupo5.huiapi.entities.user.User;
-import com.grupo5.huiapi.entities.user.UserService;
-import com.grupo5.huiapi.exceptions.CategoryNotFoundException;
-import com.grupo5.huiapi.exceptions.UserNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -67,6 +63,19 @@ public class Event {
         if(cat.getParent() != null)
             this.addCategory(cat.getParent());
         return this.categories;
+    }
+
+    public String checkNullFields() {
+        List<String> missingFields = new ArrayList<>();
+        if(ObjectUtils.isEmpty(this.title))
+            missingFields.add("title");
+        if(ObjectUtils.isEmpty(this.organizer))
+            missingFields.add("organizer");
+        if(ObjectUtils.isEmpty(this.categories))
+            missingFields.add("categories");
+
+
+        return missingFields.isEmpty() ? null : String.join(", ", missingFields);
     }
 
 }

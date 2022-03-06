@@ -8,6 +8,7 @@ import lombok.*;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -120,5 +121,4 @@ public class User {
 
         return missingFields.isEmpty() ? null : String.join(", ", missingFields);
     }
-
 }

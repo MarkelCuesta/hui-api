@@ -30,7 +30,6 @@ public class DBConfig {
             categoryRepository.saveAll( getInitialCategories() );
             userRepository.saveAll( getInitialUsers() );
             eventRepository.saveAll( getInitialEvents() );
-
         };
     }
 

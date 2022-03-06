@@ -29,8 +29,7 @@ public class CategoryService {
 
     public Set<Category> getCategories(JsonNode categoriesNode) throws CategoryNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode cats = categoriesNode.get("categories");
-        List<Integer> categoryIds = mapper.convertValue(cats, ArrayList.class);
+        List<Integer> categoryIds = mapper.convertValue(categoriesNode, ArrayList.class);
         return getCategories(categoryIds);
     }
 

@@ -1,8 +1,9 @@
 package com.grupo5.huiapi.entities.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.grupo5.huiapi.exceptions.CategoryNotFoundException;
-import com.grupo5.huiapi.exceptions.UserNotFoundException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grupo5.huiapi.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +20,48 @@ public class EventController {
     @GetMapping
     public List<Event> getEvents() { return eventService.getEvents();}
 
+    @GetMapping(path = "{id}")
+    public Event getEvent(@PathVariable Long id) {
+        try {
+            return eventService.getEvent(id);
+        } catch (EventNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
+    }
+
+
     @PostMapping
     public String createNewEvent(@RequestBody JsonNode jsonEvent) {
-        System.out.println(jsonEvent);
         try {
             return eventService.insertEvent(jsonEvent);
         } catch (CategoryNotFoundException | UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        }
+    }
+
+    @PutMapping(path = "{id}")
+    public String updateEvent(@PathVariable("id") Long id, @RequestBody JsonNode body) throws JsonProcessingException {
+        String password = body.get("password").asText();
+        try {
+            return eventService.updateEvent(id, password, body.get("event"));
+        } catch (EventNotFoundException | CategoryNotFoundException | UserNotFoundException | IncorrectPasswordException | RequiredValuesMissingException e) {
+            String statusStr = e.getClass().getSimpleName();
+            HttpStatus status = switch (statusStr) {
+                case "EventNotFoundException" -> HttpStatus.NOT_FOUND;
+                case "IncorrectPasswordException" -> HttpStatus.UNAUTHORIZED;
+                default -> HttpStatus.BAD_REQUEST;
+            };
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
+
+    @DeleteMapping(path = "{id}")
+    public String deleteEvent(@PathVariable("id") Long id, @RequestBody JsonNode body) {
+        String password = body.get("password").asText();
+        try {
+            return eventService.deleteEvent(id, password);
+        } catch (EventNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
 

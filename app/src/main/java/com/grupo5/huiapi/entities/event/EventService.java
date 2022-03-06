@@ -6,15 +6,11 @@ import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.category.CategoryService;
 import com.grupo5.huiapi.entities.user.User;
 import com.grupo5.huiapi.entities.user.UserService;
-import com.grupo5.huiapi.exceptions.CategoryNotFoundException;
-import com.grupo5.huiapi.exceptions.UserNotFoundException;
+import com.grupo5.huiapi.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class EventService {
@@ -40,4 +36,47 @@ public class EventService {
     }
 
 
+    public String updateEvent(Long id, String password, JsonNode event) throws EventNotFoundException, CategoryNotFoundException, UserNotFoundException, IncorrectPasswordException, RequiredValuesMissingException {
+        // Event id exists
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if (optionalEvent.isEmpty())
+            throw new EventNotFoundException();
+
+        // User id exists
+        Long organizerId = event.get("organizer").asLong();
+        User user = userService.getUser(organizerId);
+        if( !user.getPassword().equals(password) )
+            throw new IncorrectPasswordException();
+
+        // Categories exist
+        Set<Category> categories = categoryService.getCategories(event.get("categories"));
+        String title = event.get("title").asText();
+        String description  = event.get("description").asText();
+
+        // Non missing required values
+        Event updatingEvent = new Event(title, description, categories, user);
+        String nullFields = updatingEvent.checkNullFields();
+        if(nullFields != null)
+            throw new RequiredValuesMissingException(nullFields);
+
+        updatingEvent.setId(id);
+        eventRepository.save(updatingEvent);
+        return "Event updated";
+    }
+
+    public Event getEvent(Long id) throws EventNotFoundException {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if(optionalEvent.isEmpty())
+            throw new EventNotFoundException();
+        return optionalEvent.get();
+    }
+
+    public String deleteEvent(Long id, String password) throws EventNotFoundException {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if(optionalEvent.isEmpty())
+            throw new EventNotFoundException();
+
+        eventRepository.delete(optionalEvent.get());
+        return "Event removed";
+    }
 }
