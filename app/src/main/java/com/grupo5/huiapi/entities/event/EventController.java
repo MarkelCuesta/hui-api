@@ -24,7 +24,7 @@ public class EventController {
     public Event getEvent(@PathVariable Long id) {
         try {
             return eventService.getEvent(id);
-        } catch (EventNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
@@ -34,7 +34,7 @@ public class EventController {
     public String createNewEvent(@RequestBody JsonNode jsonEvent) {
         try {
             return eventService.insertEvent(jsonEvent);
-        } catch (CategoryNotFoundException | UserNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
@@ -44,10 +44,10 @@ public class EventController {
         String password = body.get("password").asText();
         try {
             return eventService.updateEvent(id, password, body.get("event"));
-        } catch (EventNotFoundException | CategoryNotFoundException | UserNotFoundException | IncorrectPasswordException | RequiredValuesMissingException e) {
+        } catch (IncorrectPasswordException | RequiredValuesMissingException | EntityNotFoundException e) {
             String statusStr = e.getClass().getSimpleName();
             HttpStatus status = switch (statusStr) {
-                case "EventNotFoundException" -> HttpStatus.NOT_FOUND;
+                case "EntityNotFoundException" -> HttpStatus.NOT_FOUND;
                 case "IncorrectPasswordException" -> HttpStatus.UNAUTHORIZED;
                 default -> HttpStatus.BAD_REQUEST;
             };
@@ -60,7 +60,7 @@ public class EventController {
         String password = body.get("password").asText();
         try {
             return eventService.deleteEvent(id, password);
-        } catch (EventNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }

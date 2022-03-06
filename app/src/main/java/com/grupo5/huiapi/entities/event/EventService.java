@@ -1,16 +1,19 @@
 package com.grupo5.huiapi.entities.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.category.CategoryService;
 import com.grupo5.huiapi.entities.user.User;
 import com.grupo5.huiapi.entities.user.UserService;
-import com.grupo5.huiapi.exceptions.*;
+import com.grupo5.huiapi.exceptions.EntityNotFoundException;
+import com.grupo5.huiapi.exceptions.IncorrectPasswordException;
+import com.grupo5.huiapi.exceptions.RequiredValuesMissingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class EventService {
@@ -25,7 +28,7 @@ public class EventService {
         return eventRepository.findAll();
     }
 
-    public String insertEvent(JsonNode eventNode) throws CategoryNotFoundException, UserNotFoundException {
+    public String insertEvent(JsonNode eventNode) throws EntityNotFoundException {
         Set<Category> categories = categoryService.getCategories(eventNode);
         String title = eventNode.get("title").asText();
         String description = eventNode.get("description").asText();
@@ -36,11 +39,11 @@ public class EventService {
     }
 
 
-    public String updateEvent(Long id, String password, JsonNode event) throws EventNotFoundException, CategoryNotFoundException, UserNotFoundException, IncorrectPasswordException, RequiredValuesMissingException {
+    public String updateEvent(Long id, String password, JsonNode event) throws EntityNotFoundException, IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException {
         // Event id exists
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if (optionalEvent.isEmpty())
-            throw new EventNotFoundException();
+            throw new EntityNotFoundException("event");
 
         // User id exists
         Long organizerId = event.get("organizer").asLong();
@@ -64,17 +67,17 @@ public class EventService {
         return "Event updated";
     }
 
-    public Event getEvent(Long id) throws EventNotFoundException {
+    public Event getEvent(Long id) throws EntityNotFoundException {
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if(optionalEvent.isEmpty())
-            throw new EventNotFoundException();
+            throw new EntityNotFoundException("event");
         return optionalEvent.get();
     }
 
-    public String deleteEvent(Long id, String password) throws EventNotFoundException {
+    public String deleteEvent(Long id, String password) throws EntityNotFoundException {
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if(optionalEvent.isEmpty())
-            throw new EventNotFoundException();
+            throw new EntityNotFoundException("event");
 
         eventRepository.delete(optionalEvent.get());
         return "Event removed";

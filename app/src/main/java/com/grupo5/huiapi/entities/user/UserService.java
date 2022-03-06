@@ -19,10 +19,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUser(Long id) throws UserNotFoundException {
+    public User getUser(Long id) throws EntityNotFoundException {
         Optional<User> user = userRepository.findById(id);
         if(user.isEmpty())
-            throw new UserNotFoundException();
+            throw new EntityNotFoundException("user");
         return user.get();
     }
 
@@ -43,10 +43,10 @@ public class UserService {
         return "User successfully registered";
     }
 
-    public String deleteUser(Long id, String password) throws UserNotFoundException, IncorrectPasswordException {
+    public String deleteUser(Long id, String password) throws IncorrectPasswordException, EntityNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
-            throw new UserNotFoundException();
+            throw new EntityNotFoundException("user");
 
         User user = optionalUser.get();
         if(!user.getPassword().equals(password)) {
@@ -58,10 +58,10 @@ public class UserService {
     }
 
 
-    public String updateUser(Long id,String password, User updatingUser) throws UserNotFoundException, IncorrectPasswordException, RequiredValuesMissingException {
+    public String updateUser(Long id,String password, User updatingUser) throws IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
-            throw new UserNotFoundException();
+            throw new EntityNotFoundException("user");
 
         User originalUser = optionalUser.get();
 

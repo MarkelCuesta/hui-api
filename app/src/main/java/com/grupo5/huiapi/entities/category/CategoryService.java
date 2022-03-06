@@ -2,11 +2,10 @@ package com.grupo5.huiapi.entities.category;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grupo5.huiapi.exceptions.CategoryNotFoundException;
+import com.grupo5.huiapi.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 
 @Service
@@ -20,20 +19,20 @@ public class CategoryService {
 
     public List<Category> getCategories() {return categoryRepository.findAll(); }
 
-    public Category getCategory(Long id) throws CategoryNotFoundException {
+    public Category getCategory(Long id) throws EntityNotFoundException {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isEmpty())
-            throw new CategoryNotFoundException();
+            throw new EntityNotFoundException("category");
         return optionalCategory.get();
     }
 
-    public Set<Category> getCategories(JsonNode categoriesNode) throws CategoryNotFoundException {
+    public Set<Category> getCategories(JsonNode categoriesNode) throws EntityNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
         List<Integer> categoryIds = mapper.convertValue(categoriesNode, ArrayList.class);
         return getCategories(categoryIds);
     }
 
-    public Set<Category> getCategories(List<Integer> categories) throws CategoryNotFoundException {
+    public Set<Category> getCategories(List<Integer> categories) throws EntityNotFoundException {
         Set<Category> ret = new HashSet<>();
         System.out.println(categories);
         for (Integer category : categories) {

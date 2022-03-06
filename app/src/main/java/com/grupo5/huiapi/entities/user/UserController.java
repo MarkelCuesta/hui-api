@@ -28,7 +28,7 @@ public class UserController {
     public User getUser(@PathVariable("id") Long id) {
         try {
             return userService.getUser(id);
-        } catch (UserNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
@@ -47,7 +47,7 @@ public class UserController {
         String password = body.get("password").asText();
         try {
             return userService.deleteUser(id, password);
-        } catch (IncorrectPasswordException | UserNotFoundException e) {
+        } catch (IncorrectPasswordException | EntityNotFoundException e) {
             HttpStatus status = e instanceof IncorrectPasswordException ? HttpStatus.UNAUTHORIZED : HttpStatus.NOT_FOUND;
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
@@ -59,10 +59,10 @@ public class UserController {
         try {
             User user = mapper.treeToValue(body.get("user"), User.class);
             return userService.updateUser(id, password, user);
-        } catch (IncorrectPasswordException | UserNotFoundException | JsonProcessingException | RequiredValuesMissingException e) {
+        } catch (IncorrectPasswordException | JsonProcessingException | RequiredValuesMissingException | EntityNotFoundException e) {
             HttpStatus status = switch (e.getClass().getSimpleName()) {
                 case "IncorrectPasswordException" -> HttpStatus.UNAUTHORIZED;
-                case "UserIdNotFoundException"    -> HttpStatus.NOT_FOUND;
+                case "EntityNotFoundException"    -> HttpStatus.NOT_FOUND;
                 default -> HttpStatus.BAD_REQUEST;
             };
             throw new ResponseStatusException(status, e.getMessage(), e);
