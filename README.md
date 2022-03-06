@@ -1,6 +1,8 @@
 # hui-api
 This is the server side REST API made for the HUI Proyect. Built with Spring Boot and Hibernate.
 
+Postman API Reference: https://www.postman.com/hui-app
+
 ---
 
 ### Stack of technologies used:
