@@ -2,6 +2,7 @@ package com.grupo5.huiapi.entities.category;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grupo5.huiapi.config.EntityType;
 import com.grupo5.huiapi.exceptions.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class CategoryService {
     public Category getCategory(Long id) throws EntityNotFoundException {
         Optional<Category> optionalCategory = categoryRepository.findById(id);
         if (optionalCategory.isEmpty())
-            throw new EntityNotFoundException("category");
+            throw new EntityNotFoundException(EntityType.CATEGORY);
         return optionalCategory.get();
     }
 

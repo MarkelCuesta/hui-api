@@ -1,14 +1,14 @@
 package com.grupo5.huiapi.entities.user;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.event.Event;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,7 +55,7 @@ public class User {
     @Column()
     private String facebook;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "enrolled_events",
             joinColumns = {
                     @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)

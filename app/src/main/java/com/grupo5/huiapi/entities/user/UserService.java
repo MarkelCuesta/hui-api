@@ -1,5 +1,8 @@
 package com.grupo5.huiapi.entities.user;
 
+import com.grupo5.huiapi.config.EntityType;
+import com.grupo5.huiapi.entities.event.Event;
+import com.grupo5.huiapi.entities.event.EventRepository;
 import com.grupo5.huiapi.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,6 +12,7 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -22,7 +26,7 @@ public class UserService {
     public User getUser(Long id) throws EntityNotFoundException {
         Optional<User> user = userRepository.findById(id);
         if(user.isEmpty())
-            throw new EntityNotFoundException("user");
+            throw new EntityNotFoundException(EntityType.USER);
         return user.get();
     }
 
@@ -46,7 +50,7 @@ public class UserService {
     public String deleteUser(Long id, String password) throws IncorrectPasswordException, EntityNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
-            throw new EntityNotFoundException("user");
+            throw new EntityNotFoundException(EntityType.USER);
 
         User user = optionalUser.get();
         if(!user.getPassword().equals(password)) {
@@ -61,7 +65,7 @@ public class UserService {
     public String updateUser(Long id,String password, User updatingUser) throws IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
-            throw new EntityNotFoundException("user");
+            throw new EntityNotFoundException(EntityType.USER);
 
         User originalUser = optionalUser.get();
 
@@ -80,4 +84,7 @@ public class UserService {
     }
 
 
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }

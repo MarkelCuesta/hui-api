@@ -1,6 +1,7 @@
 package com.grupo5.huiapi.entities.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.grupo5.huiapi.config.EntityType;
 import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.category.CategoryService;
 import com.grupo5.huiapi.entities.user.User;
@@ -43,7 +44,7 @@ public class EventService {
         // Event id exists
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if (optionalEvent.isEmpty())
-            throw new EntityNotFoundException("event");
+            throw new EntityNotFoundException(EntityType.EVENT);
 
         // User id exists
         Long organizerId = event.get("organizer").asLong();
@@ -70,16 +71,31 @@ public class EventService {
     public Event getEvent(Long id) throws EntityNotFoundException {
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if(optionalEvent.isEmpty())
-            throw new EntityNotFoundException("event");
+            throw new EntityNotFoundException(EntityType.EVENT);
         return optionalEvent.get();
     }
 
     public String deleteEvent(Long id, String password) throws EntityNotFoundException {
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if(optionalEvent.isEmpty())
-            throw new EntityNotFoundException("event");
+            throw new EntityNotFoundException(EntityType.EVENT);
 
         eventRepository.delete(optionalEvent.get());
         return "Event removed";
+    }
+    public String enrollToEvent(String password, Long userId, Long eventId) throws IncorrectPasswordException, EntityNotFoundException {
+        User user = userService.getUser(userId);
+
+        if( !user.getPassword().equals(password) )
+            throw new IncorrectPasswordException();
+
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if(optionalEvent.isEmpty())
+            throw new EntityNotFoundException(EntityType.EVENT);
+
+        Event event = optionalEvent.get();
+        user.getEnrolled_events().add(event);
+        userService.save(user);
+        return "Enrolled to event";
     }
 }

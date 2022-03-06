@@ -3,6 +3,7 @@ package com.grupo5.huiapi.entities.event;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grupo5.huiapi.config.EntityType;
 import com.grupo5.huiapi.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,5 +66,20 @@ public class EventController {
         }
     }
 
+    @PutMapping(path = "{id}/enroll")
+    public String enrollToEvent(@PathVariable("id") Long eventId, @RequestBody JsonNode body) {
+        String password = body.get("password").asText();
+        Long userId = body.get("userId").asLong();
+        try {
+            return eventService.enrollToEvent(password, userId, eventId);
+        } catch (IncorrectPasswordException | EntityNotFoundException e) {
+            HttpStatus status = HttpStatus.BAD_REQUEST;
+            if(e instanceof  EntityNotFoundException) {
+                EntityType type = ((EntityNotFoundException) e).getType();
+                status = type == EntityType.EVENT ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+            }
+            throw new ResponseStatusException(status, e.getMessage(), e);
+        }
+    }
 
 }
