@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.grupo5.huiapi.entities.category.Category;
 import com.grupo5.huiapi.entities.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.*;
@@ -27,6 +25,8 @@ public class Event {
     @Column(nullable = false)
     private String title;
     private String description;
+
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "event_categories",
         joinColumns = {
@@ -43,6 +43,19 @@ public class Event {
     @JoinColumn(name = "organizer_id", nullable = false)
     @JsonIdentityReference(alwaysAsId = true)
     private User organizer;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "enrolled_events",
+            joinColumns = {
+                    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)
+            }
+    )
+    private Set<Event> enrolled_users = new HashSet<>();
 
     public Event(String title, String description, Set<Category> categories, User organizer) {
         this.title = title;

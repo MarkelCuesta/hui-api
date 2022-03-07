@@ -55,15 +55,18 @@ public class User {
     @Column()
     private String facebook;
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "enrolled_events",
             joinColumns = {
-                    @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)
+                    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
             },
             inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
+                    @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)
             }
     )
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<Event> enrolled_events = new HashSet<>();
 
     @OneToMany(mappedBy = "id", fetch = FetchType.LAZY, cascade = CascadeType.MERGE, orphanRemoval = true)

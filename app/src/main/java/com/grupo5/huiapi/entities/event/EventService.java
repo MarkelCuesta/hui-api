@@ -80,6 +80,8 @@ public class EventService {
         if(optionalEvent.isEmpty())
             throw new EntityNotFoundException(EntityType.EVENT);
 
+
+
         eventRepository.delete(optionalEvent.get());
         return "Event removed";
     }
