@@ -1,6 +1,6 @@
 package com.grupo5.huiapi.utils;
 
-import com.grupo5.huiapi.entities.category.Category;
+import com.grupo5.huiapi.modules.category.entity.Category;
 
 import java.util.ArrayList;
 import java.util.List;

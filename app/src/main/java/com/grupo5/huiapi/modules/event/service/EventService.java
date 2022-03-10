@@ -1,11 +1,13 @@
-package com.grupo5.huiapi.entities.event;
+package com.grupo5.huiapi.modules.event.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.grupo5.huiapi.config.EntityType;
-import com.grupo5.huiapi.entities.category.Category;
-import com.grupo5.huiapi.entities.category.CategoryService;
-import com.grupo5.huiapi.entities.user.User;
-import com.grupo5.huiapi.entities.user.UserService;
+import com.grupo5.huiapi.modules.EntityType;
+import com.grupo5.huiapi.modules.category.entity.Category;
+import com.grupo5.huiapi.modules.category.service.CategoryService;
+import com.grupo5.huiapi.modules.event.entity.Event;
+import com.grupo5.huiapi.modules.event.repository.EventRepository;
+import com.grupo5.huiapi.modules.user.entity.User;
+import com.grupo5.huiapi.modules.user.service.UserService;
 import com.grupo5.huiapi.exceptions.EntityNotFoundException;
 import com.grupo5.huiapi.exceptions.IncorrectPasswordException;
 import com.grupo5.huiapi.exceptions.RequiredValuesMissingException;

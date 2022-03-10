@@ -1,6 +1,6 @@
 package com.grupo5.huiapi.exceptions;
 
-import com.grupo5.huiapi.config.EntityType;
+import com.grupo5.huiapi.modules.EntityType;
 import lombok.Getter;
 
 public class EntityNotFoundException extends Exception {

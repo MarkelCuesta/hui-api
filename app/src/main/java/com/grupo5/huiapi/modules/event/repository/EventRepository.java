@@ -1,5 +1,6 @@
-package com.grupo5.huiapi.entities.event;
+package com.grupo5.huiapi.modules.event.repository;
 
+import com.grupo5.huiapi.modules.event.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

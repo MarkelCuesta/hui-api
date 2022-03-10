@@ -1,10 +1,11 @@
-package com.grupo5.huiapi.entities.event;
+package com.grupo5.huiapi.modules.event.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grupo5.huiapi.config.EntityType;
+import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.exceptions.*;
+import com.grupo5.huiapi.modules.event.service.EventService;
+import com.grupo5.huiapi.modules.event.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

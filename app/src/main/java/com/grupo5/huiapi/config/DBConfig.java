@@ -1,11 +1,11 @@
 package com.grupo5.huiapi.config;
 
-import com.grupo5.huiapi.entities.category.Category;
-import com.grupo5.huiapi.entities.category.CategoryRepository;
-import com.grupo5.huiapi.entities.event.Event;
-import com.grupo5.huiapi.entities.event.EventRepository;
-import com.grupo5.huiapi.entities.user.User;
-import com.grupo5.huiapi.entities.user.UserRepository;
+import com.grupo5.huiapi.modules.category.entity.Category;
+import com.grupo5.huiapi.modules.category.repository.CategoryRepository;
+import com.grupo5.huiapi.modules.event.entity.Event;
+import com.grupo5.huiapi.modules.event.repository.EventRepository;
+import com.grupo5.huiapi.modules.user.entity.User;
+import com.grupo5.huiapi.modules.user.repository.UserRepository;
 import com.grupo5.huiapi.utils.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;

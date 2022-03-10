@@ -1,5 +1,6 @@
-package com.grupo5.huiapi.entities.user;
+package com.grupo5.huiapi.modules.user.repository;
 
+import com.grupo5.huiapi.modules.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

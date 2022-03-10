@@ -1,9 +1,11 @@
-package com.grupo5.huiapi.entities.category;
+package com.grupo5.huiapi.modules.category.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grupo5.huiapi.config.EntityType;
+import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.exceptions.EntityNotFoundException;
+import com.grupo5.huiapi.modules.category.entity.Category;
+import com.grupo5.huiapi.modules.category.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

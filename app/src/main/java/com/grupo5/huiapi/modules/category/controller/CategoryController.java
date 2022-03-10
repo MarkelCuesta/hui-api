@@ -1,6 +1,8 @@
-package com.grupo5.huiapi.entities.category;
+package com.grupo5.huiapi.modules.category.controller;
 
 import com.grupo5.huiapi.exceptions.EntityNotFoundException;
+import com.grupo5.huiapi.modules.category.service.CategoryService;
+import com.grupo5.huiapi.modules.category.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

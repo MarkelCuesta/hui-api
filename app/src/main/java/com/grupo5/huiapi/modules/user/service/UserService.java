@@ -1,9 +1,9 @@
-package com.grupo5.huiapi.entities.user;
+package com.grupo5.huiapi.modules.user.service;
 
-import com.grupo5.huiapi.config.EntityType;
-import com.grupo5.huiapi.entities.event.Event;
-import com.grupo5.huiapi.entities.event.EventRepository;
+import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.exceptions.*;
+import com.grupo5.huiapi.modules.user.entity.User;
+import com.grupo5.huiapi.modules.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
