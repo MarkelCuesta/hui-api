@@ -39,8 +39,10 @@ public class UserController {
     public String registerNewUser(@RequestBody User user) {
         try {
             return userService.insertUser(user);
-        } catch (EmailTakenException | UsernameTakenException | RequiredValuesMissingException e) {
-            HttpStatus status = e instanceof RequiredValuesMissingException ? HttpStatus.BAD_REQUEST : HttpStatus.CONFLICT;
+        } catch (EmailTakenException | UsernameTakenException | RequiredValuesMissingException | EntityNotFoundException e) {
+            HttpStatus status = e instanceof RequiredValuesMissingException || e instanceof EntityNotFoundException
+                    ? HttpStatus.BAD_REQUEST
+                    : HttpStatus.CONFLICT;
              throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }

@@ -3,22 +3,24 @@ package com.grupo5.huiapi.modules.user.service;
 import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.exceptions.*;
 import com.grupo5.huiapi.modules.user.entity.User;
+import com.grupo5.huiapi.modules.user.modules.role.service.RoleService;
 import com.grupo5.huiapi.modules.user.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Service @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleService roleService) {
         this.userRepository = userRepository;
+        this.roleService = roleService;
     }
-
-
     public List<User> getUsers() {
         return userRepository.findAll();
     }
@@ -30,7 +32,7 @@ public class UserService {
         return user.get();
     }
 
-    public String insertUser(User user) throws EmailTakenException, UsernameTakenException, RequiredValuesMissingException {
+    public String insertUser(User user) throws EmailTakenException, UsernameTakenException, RequiredValuesMissingException, EntityNotFoundException {
         Optional<User> userOptionalByMail= userRepository.findUserByEmail(user.getEmail());
         if(userOptionalByMail.isPresent())
             throw new EmailTakenException();
@@ -42,8 +44,19 @@ public class UserService {
         String missingValues = user.checkNullFields();
         if(missingValues != null)
             throw new RequiredValuesMissingException(missingValues);
+        System.out.println(user);
+
+        if (user.getRole().getName() == null)
+            roleService.addRoleToUser("user", user);
+
+        String enteredRole = user.getRole().getName();
+
+        String addingRole = enteredRole == null ? "user" : enteredRole;
+         roleService.addRoleToUser(enteredRole, user);
 
         userRepository.save(user);
+
+        log.info("User successfully registered");
         return "User successfully registered";
     }
 

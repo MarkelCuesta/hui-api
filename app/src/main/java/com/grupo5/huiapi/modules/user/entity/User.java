@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.grupo5.huiapi.modules.category.entity.Category;
 import com.grupo5.huiapi.modules.event.entity.Event;
+import com.grupo5.huiapi.modules.user.modules.role.RoleType;
+import com.grupo5.huiapi.modules.user.modules.role.entity.Role;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
 
@@ -55,6 +57,9 @@ public class User {
     @Column()
     private String facebook;
 
+    @ManyToOne
+    private Role role;
+
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -104,12 +109,13 @@ public class User {
         this.username = username;
     }
     // Constructor con los parámetros mínimos
-    public User(String username, String password, String mail, String fullName, Set<Category> favorite_categories) {
+    public User(String username, String password, String mail, String fullName, Set<Category> favorite_categories, Role role) {
         this.password = password;
         this.fullName = fullName;
         this.email = mail;
         this.username = username;
         this.favorite_categories = favorite_categories;
+        this.role = role;
     }
     public String checkNullFields() {
         List<String> missingFields = new ArrayList<>();

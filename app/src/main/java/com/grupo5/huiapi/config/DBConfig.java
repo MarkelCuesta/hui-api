@@ -5,6 +5,9 @@ import com.grupo5.huiapi.modules.category.repository.CategoryRepository;
 import com.grupo5.huiapi.modules.event.entity.Event;
 import com.grupo5.huiapi.modules.event.repository.EventRepository;
 import com.grupo5.huiapi.modules.user.entity.User;
+import com.grupo5.huiapi.modules.user.modules.role.RoleType;
+import com.grupo5.huiapi.modules.user.modules.role.entity.Role;
+import com.grupo5.huiapi.modules.user.modules.role.repository.RoleRepository;
 import com.grupo5.huiapi.modules.user.repository.UserRepository;
 import com.grupo5.huiapi.utils.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,14 +26,23 @@ public class DBConfig {
     private UserRepository userRepository;
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Bean
     CommandLineRunner commandLineRunner() {
         return args -> {
             categoryRepository.saveAll( getInitialCategories() );
+            roleRepository.saveAll( getInitialRoles() );
             userRepository.saveAll( getInitialUsers() );
             eventRepository.saveAll( getInitialEvents() );
+
         };
+    }
+    private List<Role> getInitialRoles() {
+        Role user = new Role("user");
+        Role admin = new Role("admin");
+        return List.of(user,admin);
     }
 
     private List<Event> getInitialEvents() {
@@ -56,6 +68,8 @@ public class DBConfig {
     private List<User> getInitialUsers() {
         Category boxingat = categoryRepository.findCategoryByName("Boxeo").get();
         Set<Category> favs1 = new HashSet<>(List.of(boxingat));
+        Role userRole = roleRepository.findByName("user").get();
+        Role adminRole = roleRepository.findByName("admin").get();
 
         return List.of(
             new User(
@@ -63,14 +77,17 @@ public class DBConfig {
                 "anotherpassword123",
                 "jon@email.com",
                 "Jon Arroita",
-                    favs1
+                    favs1,
+                    userRole
 
             ),
             new User(
                 "markelca",
                 "password123",
                 "cuestaarribas.markel@gmail.com",
-                "Markel Cuesta"
+                "Markel Cuesta",
+                    favs1,
+                    adminRole
             )
 
         );
