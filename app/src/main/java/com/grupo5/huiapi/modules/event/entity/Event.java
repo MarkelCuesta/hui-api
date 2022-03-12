@@ -28,6 +28,8 @@ public class Event {
 
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     @JoinTable(name = "event_categories",
         joinColumns = {
             @JoinColumn(name = "event_id", referencedColumnName = "id", updatable = false)

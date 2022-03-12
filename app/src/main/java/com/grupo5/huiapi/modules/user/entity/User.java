@@ -3,7 +3,6 @@ package com.grupo5.huiapi.modules.user.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.JsonSerializable;
 import com.grupo5.huiapi.modules.category.entity.Category;
 import com.grupo5.huiapi.modules.event.entity.Event;
 import com.grupo5.huiapi.modules.user.modules.role.entity.Role;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 // JPA
-@Entity @Table
+@Entity @Table(name = "users")
 // Lombok
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
@@ -29,34 +28,24 @@ public class User  {
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1 )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
     private Long id;
-
     @Column(nullable = false, unique = true)
     private String username;
-
     @Column(nullable = false)
     private String password;
-
     @Column(nullable = false, unique = true)
     private String email;
-
     @Column(nullable = false)
     private String fullName;
-
     @Column()
     private String description;
-
     @Column()
     private String instagram;
-
     @Column()
     private String telegram;
-
     @Column()
     private String youtube;
-
     @Column()
     private String facebook;
-
     @ManyToOne
     private Role role;
 

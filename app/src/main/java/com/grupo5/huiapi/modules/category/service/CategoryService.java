@@ -31,13 +31,13 @@ public class CategoryService {
 
     public Set<Category> getCategories(JsonNode categoriesNode) throws EntityNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
-        List<Integer> categoryIds = mapper.convertValue(categoriesNode, ArrayList.class);
+        JsonNode categories = categoriesNode.get("categories");
+        List<Integer> categoryIds = mapper.convertValue(categories, ArrayList.class);
         return getCategories(categoryIds);
     }
 
     public Set<Category> getCategories(List<Integer> categories) throws EntityNotFoundException {
         Set<Category> ret = new HashSet<>();
-        System.out.println(categories);
         for (Integer category : categories) {
             ret.add(getCategory( Long.valueOf(category) ));
         }
