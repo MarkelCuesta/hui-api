@@ -4,9 +4,11 @@ import com.grupo5.huiapi.exceptions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.grupo5.huiapi.modules.user.service.UserService;
+import com.grupo5.huiapi.modules.user.service.DefaultUserService;
 import com.grupo5.huiapi.modules.user.entity.User;
+import com.grupo5.huiapi.modules.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) { this.userService = userService; }
+    public UserController(@Qualifier("DefaultUserService") UserService userService) { this.userService = userService; }
 
     @GetMapping
     public List<User> getUsers() {
@@ -46,6 +48,7 @@ public class UserController {
              throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
+
     @DeleteMapping(path = "{id}")
     public String deleteUser(@PathVariable("id") Long id, @RequestBody ObjectNode body) {
         String password = body.get("password").asText();
@@ -56,6 +59,7 @@ public class UserController {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
+
     @PutMapping(path = "{id}")
     public String updateUser(@PathVariable("id") Long id, @RequestBody ObjectNode body) {
         ObjectMapper mapper = new ObjectMapper();
@@ -72,7 +76,5 @@ public class UserController {
             throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
-
-
 
 }

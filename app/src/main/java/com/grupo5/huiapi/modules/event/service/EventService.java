@@ -2,36 +2,48 @@ package com.grupo5.huiapi.modules.event.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.grupo5.huiapi.modules.EntityType;
+import com.grupo5.huiapi.modules.Service;
 import com.grupo5.huiapi.modules.category.entity.Category;
 import com.grupo5.huiapi.modules.category.service.CategoryService;
 import com.grupo5.huiapi.modules.event.entity.Event;
 import com.grupo5.huiapi.modules.event.repository.EventRepository;
 import com.grupo5.huiapi.modules.user.entity.User;
-import com.grupo5.huiapi.modules.user.service.UserService;
+import com.grupo5.huiapi.modules.user.service.DefaultUserService;
 import com.grupo5.huiapi.exceptions.EntityNotFoundException;
 import com.grupo5.huiapi.exceptions.IncorrectPasswordException;
 import com.grupo5.huiapi.exceptions.RequiredValuesMissingException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@Service
-public class EventService {
-    @Autowired
-    private EventRepository eventRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CategoryService categoryService;
+@org.springframework.stereotype.Service
+public class EventService implements Service<Event, Long> {
+    private final EventRepository eventRepository;
+    private final DefaultUserService userService;
+    private final CategoryService categoryService;
 
-    public List<Event> getEvents() {
-        return eventRepository.findAll();
+    @Autowired
+    public EventService(EventRepository eventRepository, DefaultUserService userService, CategoryService categoryService) {
+        this.eventRepository = eventRepository;
+        this.userService = userService;
+        this.categoryService = categoryService;
     }
 
-    public String insertEvent(JsonNode eventNode) throws EntityNotFoundException {
+    @Override
+    public Event get(Long id) throws EntityNotFoundException {
+        Optional<Event> optionalEvent = eventRepository.findById(id);
+        if(optionalEvent.isEmpty())
+            throw new EntityNotFoundException(EntityType.EVENT);
+        return optionalEvent.get();
+    }
+    @Override
+    public List<Event> getAll() {
+        return eventRepository.findAll();
+    }
+    @Override
+    public String insert(JsonNode eventNode) throws EntityNotFoundException {
         Set<Category> categories = categoryService.getCategories(eventNode);
         String title = eventNode.get("title").asText();
         String description = eventNode.get("description").asText();
@@ -40,9 +52,8 @@ public class EventService {
         eventRepository.save(event);
         return "Event registered";
     }
-
-
-    public String updateEvent(Long id, String password, JsonNode event) throws EntityNotFoundException, IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException {
+    @Override
+    public String update(Long id, String password, JsonNode event) throws IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException {
         // Event id exists
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if (optionalEvent.isEmpty())
@@ -69,15 +80,8 @@ public class EventService {
         eventRepository.save(updatingEvent);
         return "Event updated";
     }
-
-    public Event getEvent(Long id) throws EntityNotFoundException {
-        Optional<Event> optionalEvent = eventRepository.findById(id);
-        if(optionalEvent.isEmpty())
-            throw new EntityNotFoundException(EntityType.EVENT);
-        return optionalEvent.get();
-    }
-
-    public String deleteEvent(Long id, String password) throws EntityNotFoundException {
+    @Override
+    public String delete(Long id, String password) throws EntityNotFoundException {
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if(optionalEvent.isEmpty())
             throw new EntityNotFoundException(EntityType.EVENT);
@@ -87,7 +91,8 @@ public class EventService {
         eventRepository.delete(optionalEvent.get());
         return "Event removed";
     }
-    public String enrollToEvent(String password, Long userId, Long eventId) throws IncorrectPasswordException, EntityNotFoundException {
+
+    public String enroll(String password, Long userId, Long eventId) throws IncorrectPasswordException, EntityNotFoundException {
         User user = userService.getUser(userId);
 
         if( !user.getPassword().equals(password) )
@@ -98,8 +103,7 @@ public class EventService {
             throw new EntityNotFoundException(EntityType.EVENT);
 
         Event event = optionalEvent.get();
-        user.getEnrolled_events().add(event);
-        userService.save(user);
+        userService.enrollToEvent(event, user);
         return "Enrolled to event";
     }
 }

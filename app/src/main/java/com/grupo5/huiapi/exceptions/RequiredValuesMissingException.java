@@ -1,6 +1,6 @@
 package com.grupo5.huiapi.exceptions;
 
-public class RequiredValuesMissingException  extends Exception {
+public class RequiredValuesMissingException  extends CustomException {
     private String message;
     private static final String defaultMessage = "Some required values are missing";
 

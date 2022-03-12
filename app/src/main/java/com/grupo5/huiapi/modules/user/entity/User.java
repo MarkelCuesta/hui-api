@@ -3,9 +3,9 @@ package com.grupo5.huiapi.modules.user.entity;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.JsonSerializable;
 import com.grupo5.huiapi.modules.category.entity.Category;
 import com.grupo5.huiapi.modules.event.entity.Event;
-import com.grupo5.huiapi.modules.user.modules.role.RoleType;
 import com.grupo5.huiapi.modules.user.modules.role.entity.Role;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
@@ -23,7 +23,7 @@ import java.util.Set;
 @Getter @Setter
 @ToString
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class User {
+public class User  {
     @Getter @Setter
     @Id
     @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1 )

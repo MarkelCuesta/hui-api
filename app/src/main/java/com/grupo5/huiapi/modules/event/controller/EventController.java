@@ -20,12 +20,12 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping
-    public List<Event> getEvents() { return eventService.getEvents();}
+    public List<Event> getEvents() { return eventService.getAll();}
 
     @GetMapping(path = "{id}")
     public Event getEvent(@PathVariable Long id) {
         try {
-            return eventService.getEvent(id);
+            return eventService.get(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
@@ -35,7 +35,7 @@ public class EventController {
     @PostMapping
     public String createNewEvent(@RequestBody JsonNode jsonEvent) {
         try {
-            return eventService.insertEvent(jsonEvent);
+            return eventService.insert(jsonEvent);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
@@ -45,7 +45,7 @@ public class EventController {
     public String updateEvent(@PathVariable("id") Long id, @RequestBody JsonNode body) throws JsonProcessingException {
         String password = body.get("password").asText();
         try {
-            return eventService.updateEvent(id, password, body.get("event"));
+            return eventService.update(id, password, body.get("event"));
         } catch (IncorrectPasswordException | RequiredValuesMissingException | EntityNotFoundException e) {
             String statusStr = e.getClass().getSimpleName();
             HttpStatus status = switch (statusStr) {
@@ -61,7 +61,7 @@ public class EventController {
     public String deleteEvent(@PathVariable("id") Long id, @RequestBody JsonNode body) {
         String password = body.get("password").asText();
         try {
-            return eventService.deleteEvent(id, password);
+            return eventService.delete(id, password);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
@@ -72,7 +72,7 @@ public class EventController {
         String password = body.get("password").asText();
         Long userId = body.get("userId").asLong();
         try {
-            return eventService.enrollToEvent(password, userId, eventId);
+            return eventService.enroll(password, userId, eventId);
         } catch (IncorrectPasswordException | EntityNotFoundException e) {
             HttpStatus status = HttpStatus.BAD_REQUEST;
             if(e instanceof  EntityNotFoundException) {

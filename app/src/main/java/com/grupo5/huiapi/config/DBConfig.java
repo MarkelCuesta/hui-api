@@ -5,7 +5,6 @@ import com.grupo5.huiapi.modules.category.repository.CategoryRepository;
 import com.grupo5.huiapi.modules.event.entity.Event;
 import com.grupo5.huiapi.modules.event.repository.EventRepository;
 import com.grupo5.huiapi.modules.user.entity.User;
-import com.grupo5.huiapi.modules.user.modules.role.RoleType;
 import com.grupo5.huiapi.modules.user.modules.role.entity.Role;
 import com.grupo5.huiapi.modules.user.modules.role.repository.RoleRepository;
 import com.grupo5.huiapi.modules.user.repository.UserRepository;
