@@ -1,5 +1,8 @@
 package com.grupo5.huiapi.modules.user.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.exceptions.*;
 import com.grupo5.huiapi.modules.event.entity.Event;
@@ -18,25 +21,27 @@ import java.util.Optional;
 public class DefaultUserService implements UserService {
     private final UserRepository userRepository;
     private final Roles roleService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public DefaultUserService(UserRepository userRepository, @Qualifier("RolesService") Roles roleService) {
+    public DefaultUserService(UserRepository userRepository, @Qualifier("RolesService") Roles roleService, ObjectMapper objectMapper) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.objectMapper = objectMapper;
     }
-    @Override
-    public User getUser(Long id) throws EntityNotFoundException {
+    public User get(Long id) throws EntityNotFoundException {
         Optional<User> user = userRepository.findById(id);
         if(user.isEmpty())
             throw new EntityNotFoundException(EntityType.USER);
         return user.get();
     }
-    @Override
-    public List<User> getUsers() {
+    public List<User> getAll() {
         return userRepository.findAll();
     }
-    @Override
-    public String insertUser(User user) throws EmailTakenException, UsernameTakenException, RequiredValuesMissingException, EntityNotFoundException {
+    public String insert(JsonNode jsonUser) throws EmailTakenException, UsernameTakenException, RequiredValuesMissingException, EntityNotFoundException, JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        User user = mapper.treeToValue(jsonUser, User.class);
+
         Optional<User> userOptionalByMail= userRepository.findUserByEmail(user.getEmail());
         if(userOptionalByMail.isPresent())
             throw new EmailTakenException();
@@ -63,8 +68,7 @@ public class DefaultUserService implements UserService {
         log.info("User successfully registered");
         return "User successfully registered";
     }
-    @Override
-    public String deleteUser(Long id, String password) throws IncorrectPasswordException, EntityNotFoundException {
+    public String delete(Long id, String password) throws IncorrectPasswordException, EntityNotFoundException {
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
             throw new EntityNotFoundException(EntityType.USER);
@@ -77,8 +81,9 @@ public class DefaultUserService implements UserService {
         userRepository.delete(user);
         return "User successfully deleted";
     }
-    @Override
-    public String updateUser(Long id,String password, User updatingUser) throws IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException {
+    public String update(Long id, String password, JsonNode updatingJsonUser) throws IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException, JsonProcessingException {
+        User updatingUser = objectMapper.treeToValue(updatingJsonUser, User.class);
+
         Optional<User> optionalUser = userRepository.findById(id);
         if(optionalUser.isEmpty())
             throw new EntityNotFoundException(EntityType.USER);
@@ -98,7 +103,6 @@ public class DefaultUserService implements UserService {
         userRepository.save(updatingUser);
         return "User updated";
     }
-    @Override
     public void enrollToEvent(Event event, User user) {
         user.getEnrolled_events().add(event);
         userRepository.save(user);

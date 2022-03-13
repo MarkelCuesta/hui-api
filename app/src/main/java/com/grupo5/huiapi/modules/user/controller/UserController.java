@@ -1,10 +1,9 @@
 package com.grupo5.huiapi.modules.user.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.grupo5.huiapi.exceptions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.grupo5.huiapi.modules.user.service.DefaultUserService;
 import com.grupo5.huiapi.modules.user.entity.User;
 import com.grupo5.huiapi.modules.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,26 +24,26 @@ public class UserController {
 
     @GetMapping
     public List<User> getUsers() {
-        return userService.getUsers();
+        return userService.getAll();
     }
 
     @GetMapping(path = "{id}")
     public User getUser(@PathVariable("id") Long id) {
         try {
-            return userService.getUser(id);
+            return userService.get(id);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
 
     @PostMapping
-    public String registerNewUser(@RequestBody User user) {
+    public String registerNewUser(@RequestBody JsonNode jsonUser) {
         try {
-            return userService.insertUser(user);
-        } catch (EmailTakenException | UsernameTakenException | RequiredValuesMissingException | EntityNotFoundException e) {
-            HttpStatus status = e instanceof RequiredValuesMissingException || e instanceof EntityNotFoundException
-                    ? HttpStatus.BAD_REQUEST
-                    : HttpStatus.CONFLICT;
+            return userService.insert(jsonUser);
+        } catch (EmailTakenException | UsernameTakenException | RequiredValuesMissingException | EntityNotFoundException | JsonProcessingException e) {
+            HttpStatus status = e instanceof UsernameTakenException || e instanceof EmailTakenException
+                    ? HttpStatus.CONFLICT
+                    : HttpStatus.BAD_REQUEST;
              throw new ResponseStatusException(status, e.getMessage(), e);
         }
     }
@@ -53,7 +52,7 @@ public class UserController {
     public String deleteUser(@PathVariable("id") Long id, @RequestBody ObjectNode body) {
         String password = body.get("password").asText();
         try {
-            return userService.deleteUser(id, password);
+            return userService.delete(id, password);
         } catch (IncorrectPasswordException | EntityNotFoundException e) {
             HttpStatus status = e instanceof IncorrectPasswordException ? HttpStatus.UNAUTHORIZED : HttpStatus.NOT_FOUND;
             throw new ResponseStatusException(status, e.getMessage(), e);
@@ -62,11 +61,9 @@ public class UserController {
 
     @PutMapping(path = "{id}")
     public String updateUser(@PathVariable("id") Long id, @RequestBody ObjectNode body) {
-        ObjectMapper mapper = new ObjectMapper();
         String password = body.get("password").asText();
         try {
-            User user = mapper.treeToValue(body.get("user"), User.class);
-            return userService.updateUser(id, password, user);
+            return userService.update(id, password, body.get("user"));
         } catch (IncorrectPasswordException | JsonProcessingException | RequiredValuesMissingException | EntityNotFoundException e) {
             HttpStatus status = switch (e.getClass().getSimpleName()) {
                 case "IncorrectPasswordException" -> HttpStatus.UNAUTHORIZED;

@@ -46,7 +46,7 @@ public class DefaultEventService implements EventService {
         Set<Category> categories = categoryService.getCategories(eventNode);
         String title = eventNode.get("title").asText();
         String description = eventNode.get("description").asText();
-        User user = userService.getUser( eventNode.get("organizer").asLong() );
+        User user = userService.get( eventNode.get("organizer").asLong() );
         Event event = new Event(title, description, categories, user);
         eventRepository.save(event);
         return "Event registered";
@@ -60,7 +60,7 @@ public class DefaultEventService implements EventService {
 
         // User id exists
         Long organizerId = event.get("organizer").asLong();
-        User user = userService.getUser(organizerId);
+        User user = userService.get(organizerId);
         if( !user.getPassword().equals(password) )
             throw new IncorrectPasswordException();
 
@@ -92,7 +92,7 @@ public class DefaultEventService implements EventService {
     }
     @Override
     public String enroll(String password, Long userId, Long eventId) throws IncorrectPasswordException, EntityNotFoundException {
-        User user = userService.getUser(userId);
+        User user = userService.get(userId);
 
         if( !user.getPassword().equals(password) )
             throw new IncorrectPasswordException();
