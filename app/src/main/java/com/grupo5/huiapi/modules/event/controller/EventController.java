@@ -7,6 +7,7 @@ import com.grupo5.huiapi.exceptions.*;
 import com.grupo5.huiapi.modules.event.service.EventService;
 import com.grupo5.huiapi.modules.event.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,7 +20,7 @@ public class EventController {
     private final EventService eventService;
 
     @Autowired
-    public EventController(EventService eventService) {
+    public EventController(@Qualifier("DefaultEventService") EventService eventService) {
         this.eventService = eventService;
     }
 

@@ -1,51 +1,13 @@
 package com.grupo5.huiapi.modules.category.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.exceptions.EntityNotFoundException;
+import com.grupo5.huiapi.modules.Service;
 import com.grupo5.huiapi.modules.category.entity.Category;
-import com.grupo5.huiapi.modules.category.repository.CategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
-@Service
-public class CategoryService {
-    private final CategoryRepository categoryRepository;
-
-    @Autowired
-    public CategoryService(CategoryRepository repository) {
-        this.categoryRepository = repository;
-    }
-
-    public List<Category> getCategories() {return categoryRepository.findAll(); }
-
-    public Category getCategory(Long id) throws EntityNotFoundException {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        if (optionalCategory.isEmpty())
-            throw new EntityNotFoundException(EntityType.CATEGORY);
-        return optionalCategory.get();
-    }
-
-    public Set<Category> getCategories(JsonNode categoriesNode) throws EntityNotFoundException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode categories = categoriesNode.get("categories");
-        List<Integer> categoryIds = mapper.convertValue(categories, ArrayList.class);
-        return getCategories(categoryIds);
-    }
-
-    public Set<Category> getCategories(List<Integer> categories) throws EntityNotFoundException {
-        Set<Category> ret = new HashSet<>();
-        for (Integer category : categories) {
-            ret.add(getCategory( Long.valueOf(category) ));
-        }
-        return ret;
-    }
-
-    public List<Category> getSubCategories(Long id) {
-        return categoryRepository.findSubCategories(id);
-    }
-
+public interface CategoryService extends Service<Category, Long> {
+    List<Category> getAll();
+    Category get(Long id) throws EntityNotFoundException;
+    List<Category> getSubCategories(Long id);
 }

@@ -6,25 +6,27 @@ import com.grupo5.huiapi.exceptions.IncorrectPasswordException;
 import com.grupo5.huiapi.exceptions.RequiredValuesMissingException;
 import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.modules.category.entity.Category;
-import com.grupo5.huiapi.modules.category.service.CategoryService;
+import com.grupo5.huiapi.modules.category.service.CategoryDefaultService;
 import com.grupo5.huiapi.modules.event.entity.Event;
 import com.grupo5.huiapi.modules.event.repository.EventRepository;
 import com.grupo5.huiapi.modules.user.entity.User;
 import com.grupo5.huiapi.modules.user.service.DefaultUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @org.springframework.stereotype.Service
+@Qualifier("DefaultEventService")
 public class DefaultEventService implements EventService {
     private final EventRepository eventRepository;
     private final DefaultUserService userService;
-    private final CategoryService categoryService;
+    private final CategoryDefaultService categoryService;
 
     @Autowired
-    public DefaultEventService(EventRepository eventRepository, DefaultUserService userService, CategoryService categoryService) {
+    public DefaultEventService(EventRepository eventRepository, DefaultUserService userService, CategoryDefaultService categoryService) {
         this.eventRepository = eventRepository;
         this.userService = userService;
         this.categoryService = categoryService;
@@ -43,7 +45,7 @@ public class DefaultEventService implements EventService {
     }
     @Override
     public String insert(JsonNode eventNode) throws EntityNotFoundException {
-        Set<Category> categories = categoryService.getCategories(eventNode);
+        Set<Category> categories = categoryService.getCategoriesFromNode(eventNode);
         String title = eventNode.get("title").asText();
         String description = eventNode.get("description").asText();
         User user = userService.get( eventNode.get("organizer").asLong() );
@@ -65,7 +67,7 @@ public class DefaultEventService implements EventService {
             throw new IncorrectPasswordException();
 
         // Categories exist
-        Set<Category> categories = categoryService.getCategories(event);
+        Set<Category> categories = categoryService.getCategoriesFromNode(event);
         String title = event.get("title").asText();
         String description  = event.get("description").asText();
 
