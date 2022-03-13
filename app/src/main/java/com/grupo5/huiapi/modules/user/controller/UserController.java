@@ -9,6 +9,7 @@ import com.grupo5.huiapi.modules.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -40,11 +41,10 @@ public class UserController {
     public String registerNewUser(@RequestBody JsonNode jsonUser) {
         try {
             return userService.insert(jsonUser);
-        } catch (EmailTakenException | UsernameTakenException | RequiredValuesMissingException | EntityNotFoundException | JsonProcessingException e) {
-            HttpStatus status = e instanceof UsernameTakenException || e instanceof EmailTakenException
-                    ? HttpStatus.CONFLICT
-                    : HttpStatus.BAD_REQUEST;
-             throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (EmailTakenException | UsernameTakenException e) {
+             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage(), e);
+        } catch (RequiredValuesMissingException | EntityNotFoundException | JsonProcessingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
 
@@ -53,9 +53,10 @@ public class UserController {
         String password = body.get("password").asText();
         try {
             return userService.delete(id, password);
-        } catch (IncorrectPasswordException | EntityNotFoundException e) {
-            HttpStatus status = e instanceof IncorrectPasswordException ? HttpStatus.UNAUTHORIZED : HttpStatus.NOT_FOUND;
-            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (IncorrectPasswordException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage(), e);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
 
@@ -64,13 +65,13 @@ public class UserController {
         String password = body.get("password").asText();
         try {
             return userService.update(id, password, body.get("user"));
-        } catch (IncorrectPasswordException | JsonProcessingException | RequiredValuesMissingException | EntityNotFoundException e) {
-            HttpStatus status = switch (e.getClass().getSimpleName()) {
-                case "IncorrectPasswordException" -> HttpStatus.UNAUTHORIZED;
-                case "EntityNotFoundException"    -> HttpStatus.NOT_FOUND;
-                default -> HttpStatus.BAD_REQUEST;
-            };
-            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (IncorrectPasswordException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage(), e);
+        } catch(EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch(JsonProcessingException | RequiredValuesMissingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+
         }
     }
 

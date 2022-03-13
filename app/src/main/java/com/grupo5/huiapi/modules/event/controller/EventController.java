@@ -36,7 +36,6 @@ public class EventController {
         }
     }
 
-
     @PostMapping
     public String createNewEvent(@RequestBody JsonNode jsonEvent) {
         try {
@@ -51,14 +50,12 @@ public class EventController {
         String password = body.get("password").asText();
         try {
             return eventService.update(id, password, body.get("event"));
-        } catch (IncorrectPasswordException | RequiredValuesMissingException | EntityNotFoundException e) {
-            String statusStr = e.getClass().getSimpleName();
-            HttpStatus status = switch (statusStr) {
-                case "EntityNotFoundException" -> HttpStatus.NOT_FOUND;
-                case "IncorrectPasswordException" -> HttpStatus.UNAUTHORIZED;
-                default -> HttpStatus.BAD_REQUEST;
-            };
-            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        } catch (IncorrectPasswordException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage(), e);
+        } catch (RequiredValuesMissingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
     }
 
@@ -78,13 +75,10 @@ public class EventController {
         Long userId = body.get("userId").asLong();
         try {
             return eventService.enroll(password, userId, eventId);
-        } catch (IncorrectPasswordException | EntityNotFoundException e) {
-            HttpStatus status = HttpStatus.BAD_REQUEST;
-            if(e instanceof  EntityNotFoundException) {
-                EntityType type = ((EntityNotFoundException) e).getType();
-                status = type == EntityType.EVENT ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
-            }
-            throw new ResponseStatusException(status, e.getMessage(), e);
+        } catch (IncorrectPasswordException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage(), e);
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
     }
 
