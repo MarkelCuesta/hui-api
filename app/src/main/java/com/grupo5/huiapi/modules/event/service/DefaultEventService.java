@@ -1,35 +1,35 @@
 package com.grupo5.huiapi.modules.event.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grupo5.huiapi.exceptions.EntityNotFoundException;
 import com.grupo5.huiapi.exceptions.IncorrectPasswordException;
 import com.grupo5.huiapi.exceptions.RequiredValuesMissingException;
 import com.grupo5.huiapi.modules.EntityType;
 import com.grupo5.huiapi.modules.category.entity.Category;
-import com.grupo5.huiapi.modules.category.service.CategoryDefaultService;
+import com.grupo5.huiapi.modules.category.service.CategoryService;
 import com.grupo5.huiapi.modules.event.entity.Event;
 import com.grupo5.huiapi.modules.event.repository.EventRepository;
 import com.grupo5.huiapi.modules.user.entity.User;
-import com.grupo5.huiapi.modules.user.service.DefaultUserService;
+import com.grupo5.huiapi.modules.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @org.springframework.stereotype.Service
 @Qualifier("DefaultEventService")
 public class DefaultEventService implements EventService {
     private final EventRepository eventRepository;
-    private final DefaultUserService userService;
-    private final CategoryDefaultService categoryService;
-
+    private final UserService userService;
+    private final CategoryService categoryService;
+    private final ObjectMapper objectMapper;
     @Autowired
-    public DefaultEventService(EventRepository eventRepository, DefaultUserService userService, CategoryDefaultService categoryService) {
+    public DefaultEventService(EventRepository eventRepository, UserService userService, CategoryService categoryService, ObjectMapper objectMapper) {
         this.eventRepository = eventRepository;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -45,13 +45,25 @@ public class DefaultEventService implements EventService {
     }
     @Override
     public String insert(JsonNode eventNode) throws EntityNotFoundException {
-        Set<Category> categories = categoryService.getCategoriesFromNode(eventNode);
+        Set<Category> categories = getCategoriesFromNode(eventNode);
         String title = eventNode.get("title").asText();
         String description = eventNode.get("description").asText();
         User user = userService.get( eventNode.get("organizer").asLong() );
         Event event = new Event(title, description, categories, user);
         eventRepository.save(event);
         return "Event registered";
+    }
+    public Set<Category> getCategoriesFromNode(JsonNode categoriesNode) throws EntityNotFoundException {
+        JsonNode categories = categoriesNode.get("categories");
+        List<Integer> categoryIds = objectMapper.convertValue(categories, ArrayList.class);
+        return getCategoriesFromIds(categoryIds);
+    }
+    public Set<Category> getCategoriesFromIds(List<Integer> categories) throws EntityNotFoundException {
+        Set<Category> ret = new HashSet<>();
+        for (Integer category : categories) {
+            ret.add(categoryService.get( Long.valueOf(category) ));
+        }
+        return ret;
     }
     @Override
     public String update(Long id, String password, JsonNode event) throws IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException {
@@ -67,7 +79,7 @@ public class DefaultEventService implements EventService {
             throw new IncorrectPasswordException();
 
         // Categories exist
-        Set<Category> categories = categoryService.getCategoriesFromNode(event);
+        Set<Category> categories = getCategoriesFromNode(event);
         String title = event.get("title").asText();
         String description  = event.get("description").asText();
 

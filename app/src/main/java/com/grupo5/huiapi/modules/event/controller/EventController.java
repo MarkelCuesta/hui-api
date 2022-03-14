@@ -37,6 +37,7 @@ public class EventController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public String createNewEvent(@RequestBody JsonNode jsonEvent) {
         try {
             return eventService.insert(jsonEvent);
