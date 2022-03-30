@@ -16,4 +16,5 @@ public interface UserService extends Service<User, Long> {
     String update(Long id, String password, JsonNode updatingUser) throws IncorrectPasswordException, RequiredValuesMissingException, EntityNotFoundException, JsonProcessingException;
     String delete(Long id, String password) throws IncorrectPasswordException, EntityNotFoundException;
     void enrollToEvent(Event event, User user);
+    User login(JsonNode jsonUser) throws EntityNotFoundException, IncorrectPasswordException;
 }
